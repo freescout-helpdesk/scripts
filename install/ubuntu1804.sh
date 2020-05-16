@@ -137,15 +137,26 @@ sudo echo 'server {
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		include fastcgi_params;
     }
-    location ~* \.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm|htc|svg|woff|woff2|ttf)$ {
+    # Uncomment this location if you want to improve attachments downloading speed.
+    # Also make sure to set APP_DOWNLOAD_ATTACHMENTS_VIA=nginx in the .env file.
+    #location ^~ /storage/app/attachment/ {
+    #    internal;
+    #    alias '"$install_path"'/storage/app/attachment/;
+    #}
+    location ~* ^/storage/attachment/ {
         expires 1M;
-		access_log off;
-		add_header Cache-Control "public";
+        access_log off;
+        try_files $uri $uri/ /index.php?$query_string;
     }
-    location ~* \.(?:css|js)$ {
-		expires 2d;
-		access_log off;
-		add_header Cache-Control "public, must-revalidate";
+    location ~* ^/(?:css|js)/.*\.(?:css|js)$ {
+        expires 2d;
+        access_log off;
+        add_header Cache-Control "public, must-revalidate";
+    }
+    location ~* ^/(?:css|fonts|img|installer|js|modules|[^\\\]+\..*)$ {
+        expires 1M;
+        access_log off;
+        add_header Cache-Control "public";
     }
     location ~ /\. {
         deny  all;
