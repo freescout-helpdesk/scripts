@@ -60,7 +60,7 @@ sudo apt update
 export DEBIAN_FRONTEND=noninteractive
 
 sudo apt remove apache2
-sudo apt install git nginx mysql-server libmysqlclient-dev php7.2 php7.2-mysqli php7.2-fpm php7.2-mbstring php7.2-xml php7.2-imap php7.2-json php7.2-zip php7.2-gd
+sudo apt install git nginx mysql-server libmysqlclient-dev php7.2 php7.2-mysqli php7.2-fpm php7.2-mbstring php7.2-xml php7.2-imap php7.2-json php7.2-zip php7.2-gd php7.2-curl
 
 #
 # MySQL
