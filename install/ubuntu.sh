@@ -2,17 +2,6 @@
 
 # This will install everything required to run a basic FreeScout installation.
 # This should be run on a clean Ubuntu server.
-#
-# Once the installation has completed you will be able to access the Postal web
-# interface on port 443. It will have a self-signed certificate.
-#
-# * Change the MySQL & RabbitMQ passwords
-# * Create your first admin user with 'postal make-user'
-# * Replace the self-signed certificate in /etc/nginx/ssl/postal.cert
-# * Make appropriate changes to the configuration in /opt/postal/config/postal.yml
-# * Setup your DNS                          [ https://github.com/atech/postal/wiki/Domains-&-DNS-Configuration ]
-# * Configure the click & open tracking     [ https://github.com/atech/postal/wiki/Click-&-Open-Tracking ]
-# * Configure spam & virus checking         [ https://github.com/atech/postal/wiki/Spam-&-Virus-Checking ]
 
 install_path='/var/www/html'
 server_ip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -25,7 +14,7 @@ printf "
 Installation script will do the following:
 - Install Nginx
 - Install MySQL 5
-- Install PHP 7.2
+- Install PHP 7.4
 - Install the latest version of the FreeScout
 - Configure HTTPS (if needed)
 - Set up a cron task
@@ -60,7 +49,7 @@ sudo apt update
 export DEBIAN_FRONTEND=noninteractive
 
 sudo apt remove apache2
-sudo apt install git nginx mysql-server libmysqlclient-dev php7.2 php7.2-mysqli php7.2-fpm php7.2-mbstring php7.2-xml php7.2-imap php7.2-json php7.2-zip php7.2-gd php7.2-curl
+sudo apt install git nginx mysql-server libmysqlclient-dev php7.4 php7.4-mysqli php7.4-fpm php7.4-mbstring php7.4-xml php7.4-imap php7.4-json php7.4-zip php7.4-gd php7.4-curl
 
 #
 # MySQL
@@ -69,6 +58,9 @@ echo "Configuring MySQL..."
 echo 'CREATE DATABASE `freescout` CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci;' | mysql -u root
 echo 'REVOKE ALL PRIVILEGES, GRANT OPTION FROM `freescout`@`localhost`;' | mysql -u root
 echo 'GRANT ALL PRIVILEGES ON `freescout`.* TO `freescout`@`localhost` IDENTIFIED BY "'"$mysql_pass"'";' | mysql -u root
+# new syntax 
+echo 'CREATE USER `freescout`@`localhost` IDENTIFIED BY "'"$mysql_pass"'";' | mysql -u root
+echo 'GRANT ALL ON `freescout`.* TO `freescout`@`localhost`;' | mysql -u root
 
 #
 # Application Setup
@@ -132,7 +124,7 @@ sudo echo 'server {
     }
     location ~ \.php$ {
 		fastcgi_split_path_info ^(.+\.php)(/.+)$;
-		fastcgi_pass unix:/run/php/php7.2-fpm.sock;
+		fastcgi_pass unix:/run/php/php7.4-fpm.sock;
 		fastcgi_index index.php;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		include fastcgi_params;
