@@ -50,6 +50,8 @@ export DEBIAN_FRONTEND=noninteractive
 
 sudo apt remove apache2
 sudo apt install git nginx mysql-server libmysqlclient-dev php7.4 php7.4-mysqli php7.4-fpm php7.4-mbstring php7.4-xml php7.4-imap php7.4-json php7.4-zip php7.4-gd php7.4-curl
+# json extension may be already included in php7.4-fpm
+sudo apt install php7.4-json
 
 #
 # MySQL
