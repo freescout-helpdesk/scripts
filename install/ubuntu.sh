@@ -49,7 +49,7 @@ sudo apt update
 export DEBIAN_FRONTEND=noninteractive
 
 sudo apt remove apache2
-sudo apt install git nginx mysql-server libmysqlclient-dev php7.4 php7.4-mysqli php7.4-fpm php7.4-mbstring php7.4-xml php7.4-imap php7.4-json php7.4-zip php7.4-gd php7.4-curl
+sudo apt install git nginx mysql-server libmysqlclient-dev php7.4 php7.4-mysqli php7.4-fpm php7.4-mbstring php7.4-xml php7.4-imap php7.4-zip php7.4-gd php7.4-curl
 # json extension may be already included in php7.4-fpm
 sudo apt install php7.4-json
 
@@ -63,6 +63,7 @@ echo 'GRANT ALL PRIVILEGES ON `freescout`.* TO `freescout`@`localhost` IDENTIFIE
 # new syntax 
 echo 'CREATE USER `freescout`@`localhost` IDENTIFIED BY "'"$mysql_pass"'";' | mysql -u root
 echo 'GRANT ALL ON `freescout`.* TO `freescout`@`localhost`;' | mysql -u root
+echo "You may see a MySQL privileges error above. Don't worry - the script executes two different commands for different DB versions and one of them always fails - just continue the installation."
 
 #
 # Application Setup
