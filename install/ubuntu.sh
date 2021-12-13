@@ -4,7 +4,7 @@
 # This should be run on a clean Ubuntu server.
 
 install_path='/var/www/html'
-server_ip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
+server_ip=`ip -o addr list | awk '{print $4}' | cut -d/ -f1 | grep -v '127.0.0.1' | grep -v '::1'`
 
 printf "
 ########################################
@@ -19,7 +19,8 @@ Installation script will do the following:
 - Configure HTTPS (if needed)
 - Set up a cron task
 
-Make sure you have a domain name pointed to your server IP: $server_ip
+Make sure you have a domain name pointed to one or multiple of your server IP addresses: 
+$server_ip
 
 You will be able to specify help desk domain name and choose installation directory.
 
