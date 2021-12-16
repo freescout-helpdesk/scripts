@@ -4,7 +4,10 @@
 # This should be run on a clean Ubuntu server.
 
 install_path='/var/www/html'
-server_ip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
+
+sudo apt-get install net-tools
+
+server_ip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n 1`
 
 printf "
 ########################################
@@ -14,7 +17,7 @@ printf "
 Installation script will do the following:
 - Install Nginx
 - Install MySQL 5
-- Install PHP 7.4
+- Install latest available version of PHP
 - Install the latest version of the FreeScout
 - Configure HTTPS (if needed)
 - Set up a cron task
@@ -23,9 +26,9 @@ Make sure you have a domain name pointed to your server IP: $server_ip
 
 You will be able to specify help desk domain name and choose installation directory.
 
-Would you like to start installation? (Y/n) [n]:"
+Would you like to start installation? (Y/n) [n]:";
 read confirm_start;
-if [ $confirm_start != "Y" ]; then
+if [ "$confirm_start" != "Y" ]; then
     exit;
 fi
 
@@ -49,15 +52,20 @@ sudo apt update
 export DEBIAN_FRONTEND=noninteractive
 
 sudo apt remove apache2
-sudo apt install git nginx mysql-server libmysqlclient-dev php7.4 php7.4-mysqli php7.4-fpm php7.4-mbstring php7.4-xml php7.4-imap php7.4-zip php7.4-gd php7.4-curl
-# json extension may be already included in php7.4-fpm
-sudo apt install php7.4-json
+sudo apt install git nginx mysql-server libmysqlclient-dev
+sudo apt install php php-mysqli php-fpm php-mbstring php-xml php-imap php-zip php-gd php-curl
+# json extension may be already included in php-fpm
+sudo apt install php-json
+
+php_version=`php -v | head -n 1 | cut -d " " -f 2 | cut -f1-2 -d"."`
 
 #
 # MySQL
 #
 echo "Configuring MySQL..."
+echo 'DROP DATABASE IF EXISTS `freescout`;' | mysql -u root
 echo 'CREATE DATABASE `freescout` CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci;' | mysql -u root
+echo 'DROP USER `freescout`@`localhost`;' | mysql -u root
 echo 'REVOKE ALL PRIVILEGES, GRANT OPTION FROM `freescout`@`localhost`;' | mysql -u root
 echo 'GRANT ALL PRIVILEGES ON `freescout`.* TO `freescout`@`localhost` IDENTIFIED BY "'"$mysql_pass"'";' | mysql -u root
 # new syntax 
@@ -127,7 +135,7 @@ sudo echo 'server {
     }
     location ~ \.php$ {
 		fastcgi_split_path_info ^(.+\.php)(/.+)$;
-		fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+		fastcgi_pass unix:/run/php/php'"$php_version"'-fpm.sock;
 		fastcgi_index index.php;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		include fastcgi_params;
@@ -183,14 +191,14 @@ printf "\nWould you like to enable HTTPS? It is free and required for browser pu
 read confirm_https;
 if [ $confirm_https = "Y" ]; then
 
-	printf "\nWhen asked to choose whether or not to redirect HTTP traffic to HTTPS, choose '2 - Redirect'.\nPress any key to continue..."
+	printf "\nAfter certbot will finish configuration, press 'c' to continue installation.\nPress any key to continue..."
 	read confirm_redirect;
 
-	sudo apt-get install software-properties-common
-	sudo add-apt-repository universe
-	sudo add-apt-repository ppa:certbot/certbot
-	sudo apt-get update
-	sudo apt-get install certbot python-certbot-nginx
+	sudo apt-get remove certbot
+	sudo snap install --classic certbot
+	sudo ln -s /snap/bin/certbot /usr/bin/certbot
+	sudo certbot --nginx
+
 	sudo certbot --nginx --register-unsafely-without-email
 
 	# Add certbot to root cron
@@ -231,7 +239,7 @@ echo ""
 echo "To complete installation please open in your browser help desk URL and follow instructions.
 You can skip setting up a cron task, as it has already been done for you.
 
-URL: $protocol://$domain_name
+URL: $protocol://$domain_name/install
 
 Database Host: localhost
 Database Port: 3306
