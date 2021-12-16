@@ -191,7 +191,7 @@ printf "\nWould you like to enable HTTPS? It is free and required for browser pu
 read confirm_https;
 if [ $confirm_https = "Y" ]; then
 
-	printf "\nAfter certbot will finish configuration, press 'c' to continue installation.\nPress any key to continue..."
+	printf "\nAFTER certbot will finish activating HTTPS, press 'c' to continue installation.\nPress any key to continue..."
 	read confirm_redirect;
 
 	sudo apt-get remove certbot
