@@ -133,9 +133,7 @@ sudo echo 'server {
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
-    location ~ \.php$ {
-    	add_header X-Frame-Options "SAMEORIGIN";
-    	
+    location ~ \.php$ {    	
 		fastcgi_split_path_info ^(.+\.php)(/.+)$;
 		fastcgi_pass unix:/run/php/php'"$php_version"'-fpm.sock;
 		fastcgi_index index.php;
