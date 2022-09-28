@@ -51,7 +51,7 @@ echo "Installing dependencies..."
 sudo apt update
 export DEBIAN_FRONTEND=noninteractive
 
-sudo apt remove apache2
+sudo apt remove apache2 -y
 sudo apt install git nginx mysql-server libmysqlclient-dev
 sudo apt install php php-mysqli php-fpm php-mbstring php-xml php-imap php-zip php-gd php-curl
 # json extension may be already included in php-fpm
