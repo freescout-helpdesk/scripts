@@ -215,6 +215,12 @@ if [ $confirm_https = "Y" ]; then
 fi
 
 #
+# Check requirements
+# 
+echo "Checking requirements..."
+php $install_path/artisan freescout:check-requriements
+
+#
 # Cron
 # 
 echo "Configuring cron task for www-data..."
