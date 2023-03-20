@@ -218,7 +218,7 @@ fi
 # Check requirements
 # 
 echo "Checking requirements..."
-php $install_path/artisan freescout:check-requriements
+php $install_path/artisan freescout:check-requirements
 
 #
 # Cron
