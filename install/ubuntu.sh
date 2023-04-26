@@ -53,7 +53,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 sudo apt remove apache2
 sudo apt install git nginx mysql-server libmysqlclient-dev
-sudo apt install php php-mysqli php-fpm php-mbstring php-xml php-imap php-zip php-gd php-curl
+sudo apt install php php-mysqli php-fpm php-mbstring php-xml php-imap php-zip php-gd php-curl php-intl
 # json extension may be already included in php-fpm
 sudo apt install php-json
 
