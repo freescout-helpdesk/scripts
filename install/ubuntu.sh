@@ -189,6 +189,7 @@ sudo service nginx reload
 # 
 printf "\nWould you like to enable HTTPS? It is free and required for browser push notifications to work. (Y/n) [n]:"
 read confirm_https;
+confirm_https=${confirm_https:-n}
 if [ $confirm_https = "Y" ]; then
 
 	printf "\nAFTER certbot will finish activating HTTPS, press 'c' to continue installation.\nPress any key to continue..."
