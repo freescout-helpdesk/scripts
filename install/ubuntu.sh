@@ -207,7 +207,7 @@ if [ $confirm_https = "Y" ]; then
 	sudo crontab -l > /tmp/rootcron;
 	certbot_cron=`more /tmp/rootcron | grep certbot`
 	if [ -z "$certbot_cron" ]; then
-		sudo echo '0 12 * * * /usr/bin/certbot renew --quiet' >> /tmp/rootcron
+		sudo echo '0 12 * * * /usr/bin/certbot renew --nginx --quiet' >> /tmp/rootcron
 		sudo crontab /tmp/rootcron
 	fi
 	if [ -f "/tmp/rootcron" ]; then
