@@ -133,7 +133,7 @@ sudo echo 'server {
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
-    location ~ \.php$ {    	
+    location ~ \.php$ {
 		fastcgi_split_path_info ^(.+\.php)(/.+)$;
 		fastcgi_pass unix:/run/php/php'"$php_version"'-fpm.sock;
 		fastcgi_index index.php;
@@ -189,6 +189,7 @@ sudo service nginx reload
 # 
 printf "\nWould you like to enable HTTPS? It is free and required for browser push notifications to work. (Y/n) [n]:"
 read confirm_https;
+confirm_https=${confirm_https:-n}
 if [ $confirm_https = "Y" ]; then
 
 	printf "\nAFTER certbot will finish activating HTTPS, press 'c' to continue installation.\nPress any key to continue..."
@@ -206,7 +207,7 @@ if [ $confirm_https = "Y" ]; then
 	sudo crontab -l > /tmp/rootcron;
 	certbot_cron=`more /tmp/rootcron | grep certbot`
 	if [ -z "$certbot_cron" ]; then
-		sudo echo '0 12 * * * /usr/bin/certbot renew --quiet' >> /tmp/rootcron
+		sudo echo '0 12 * * * /usr/bin/certbot renew --nginx --quiet' >> /tmp/rootcron
 		sudo crontab /tmp/rootcron
 	fi
 	if [ -f "/tmp/rootcron" ]; then
